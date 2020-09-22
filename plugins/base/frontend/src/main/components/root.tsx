@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import RedBox from 'redbox-react';
+import _ from "lodash";
 
 import App from "./app";
 import './app/index.scss';
@@ -27,9 +28,10 @@ const renderOnThisPage = () => {
           htmlElement: element
         }
       })
-      if (entries.length) {
+      const unique = _.uniqBy(entries, ({label}) => label)
+      if (unique.length) {
         const element = document.createElement('div')
-        render(<PageSummary entries={entries} />, element)
+        render(<PageSummary entries={unique} />, element)
         e.appendChild(element)
       }
     }

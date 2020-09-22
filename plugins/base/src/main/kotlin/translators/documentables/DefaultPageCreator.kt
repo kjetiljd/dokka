@@ -544,7 +544,7 @@ open class DefaultPageCreator(
                                             contentForBrief(it)
                                             contentForSinceKotlin(it)
                                         }
-                                        divergent {
+                                        divergent(extra = PropertyContainer.empty()) {
                                             group {
                                                 +buildSignature(it)
                                             }
