@@ -25,7 +25,7 @@ const renderOnThisPage = () => {
         return {
           location: element.getAttribute('data-name'),
           label: element.getAttribute('anchor-label'),
-          htmlElement: element
+          sourceSets: _.sortBy(element.getAttribute('data-filterable-set').split(' '))
         }
       })
       const unique = _.uniqBy(entries, ({label}) => label)

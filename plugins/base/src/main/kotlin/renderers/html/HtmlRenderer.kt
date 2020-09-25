@@ -13,6 +13,7 @@ import org.jetbrains.dokka.base.resolvers.anchors.SymbolAnchorHint
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.hasTabbedContent
 import org.jetbrains.dokka.base.renderers.isImage
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.CompositeSourceSetID
 import org.jetbrains.dokka.model.DisplaySourceSet
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.sourceSetIDs
@@ -106,7 +107,7 @@ open class HtmlRenderer(
             }
             node.hasStyle(TextStyle.Paragraph) -> p(additionalClasses) { childrenCallback() }
             node.hasStyle(TextStyle.Block) -> div(additionalClasses) { childrenCallback() }
-            node.isAnchorable -> buildAnchor(node.anchor, node.anchorLabel!!) { childrenCallback() }
+            node.isAnchorable -> buildAnchor(node.anchor, node.anchorLabel!!, node.sourceSetsFilters) { childrenCallback() }
             else -> childrenCallback()
         }
     }
@@ -369,15 +370,14 @@ open class HtmlRenderer(
             .filter { sourceSetRestriction == null || it.sourceSets.any { s -> s in sourceSetRestriction } }
             .takeIf { it.isNotEmpty() }
             ?.let {
-                anchorFromNode(node)
+                buildAnchor(node)
                 div(classes = "table-row") {
                     if (!style.contains(MultimoduleTable)) {
-                        attributes["data-filterable-current"] = node.sourceSets.joinToString(" ") {
+                        val mergedSourceSets = node.sourceSets.joinToString(" ") {
                             it.sourceSetIDs.merged.toString()
                         }
-                        attributes["data-filterable-set"] = node.sourceSets.joinToString(" ") {
-                            it.sourceSetIDs.merged.toString()
-                        }
+                        attributes["data-filterable-current"] = mergedSourceSets
+                        attributes["data-filterable-set"] = mergedSourceSets
                     }
 
                     it.filterIsInstance<ContentLink>().takeIf { it.isNotEmpty() }?.let {
@@ -513,20 +513,21 @@ open class HtmlRenderer(
         }
     }
 
-    private fun FlowContent.buildAnchor(anchor: String, anchorLabel: String, content: FlowContent.() -> Unit) {
+    private fun FlowContent.buildAnchor(anchor: String, anchorLabel: String, sourceSets: String, content: FlowContent.() -> Unit) {
         a {
             attributes["data-name"] = anchor
             attributes["anchor-label"] = anchorLabel
             attributes["id"] = anchor
+            attributes["data-filterable-set"] = sourceSets
         }
         content()
     }
 
-    private fun FlowContent.buildAnchor(anchor: String, anchorLabel: String) =
-        buildAnchor(anchor, anchorLabel) {}
+    private fun FlowContent.buildAnchor(anchor: String, anchorLabel: String, sourceSets: String) =
+        buildAnchor(anchor, anchorLabel, sourceSets) {}
 
-    private fun FlowContent.anchorFromNode(node: ContentNode) {
-        node.anchorLabel?.let { label -> buildAnchor(node.anchor, label) }
+    private fun FlowContent.buildAnchor(node: ContentNode) {
+        node.anchorLabel?.let { label -> buildAnchor(node.anchor, label, node.sourceSetsFilters) }
     }
 
 
@@ -781,3 +782,6 @@ val ContentNode.anchorLabel: String?
 
 val ContentNode.anchor: String
     get() = (dci.dri.first().toString() + "/" + extra[SymbolAnchorHint.SymbolAnchorHintKey]?.contentKind + "/" + sourceSets.joinToString { it.sourceSetIDs.all.joinToString() }).urlEncoded()
+
+val ContentNode.sourceSetsFilters: String
+    get() = sourceSets.sourceSetIDs.joinToString(" ") { it.toString() }

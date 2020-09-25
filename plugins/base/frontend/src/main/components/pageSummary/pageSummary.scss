@@ -9,9 +9,10 @@
     right: -2px;
     width: 250px;
     z-index: 8;
+    transition: width .2s;
 
     &.hidden {
-        width: unset;
+        width: 3em;
         writing-mode: vertical-rl;
         text-orientation: mixed;
 
