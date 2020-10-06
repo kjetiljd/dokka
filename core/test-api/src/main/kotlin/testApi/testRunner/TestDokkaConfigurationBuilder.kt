@@ -33,6 +33,7 @@ class TestDokkaConfigurationBuilder {
     var pluginsClasspath: List<File> = emptyList()
     var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
     var failOnWarning: Boolean = false
+    var separateInheritedMethods = false
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     fun build() = DokkaConfigurationImpl(
@@ -45,7 +46,8 @@ class TestDokkaConfigurationBuilder {
         pluginsClasspath = pluginsClasspath,
         pluginsConfiguration = pluginsConfigurations,
         modules = emptyList(),
-        failOnWarning = failOnWarning
+        failOnWarning = failOnWarning,
+        separateInheritedMethods = separateInheritedMethods,
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {

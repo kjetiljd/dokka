@@ -16,6 +16,7 @@ object DokkaDefaults {
     val cacheRoot: File? = null
     const val offlineMode: Boolean = false
     const val failOnWarning: Boolean = false
+    const val separateInheritedMethods: Boolean = false
 
     const val includeNonPublic: Boolean = false
     const val reportUndocumented: Boolean = false
@@ -92,6 +93,7 @@ interface DokkaConfiguration : Serializable {
     val cacheRoot: File?
     val offlineMode: Boolean
     val failOnWarning: Boolean
+    val separateInheritedMethods: Boolean
     val sourceSets: List<DokkaSourceSet>
     val modules: List<DokkaModuleDescription>
     val pluginsClasspath: List<File>

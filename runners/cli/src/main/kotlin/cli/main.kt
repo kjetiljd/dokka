@@ -64,6 +64,11 @@ class GlobalArguments(args: Array<String>) : DokkaConfiguration {
         "Throw an exception if the generation exited with warnings"
     ).default(DokkaDefaults.failOnWarning)
 
+    override val separateInheritedMethods: Boolean by parser.option(
+        ArgType.Boolean,
+        "Separates inherited method from the new ones"
+    ).default(DokkaDefaults.separateInheritedMethods)
+
     val globalPackageOptions by parser.option(
         ArgType.String,
         description = "List of package source sets in format \"prefix,-deprecated,-privateApi,+warnUndocumented,+suppress;...\" "

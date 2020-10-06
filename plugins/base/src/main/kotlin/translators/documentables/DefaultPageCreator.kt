@@ -1,5 +1,6 @@
 package org.jetbrains.dokka.base.translators.documentables
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.transformers.documentables.CallableExtensions
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
@@ -25,11 +26,14 @@ private val specialTags: Set<KClass<out TagWrapper>> =
     setOf(Property::class, Description::class, Constructor::class, Receiver::class, Param::class, See::class)
 
 open class DefaultPageCreator(
+    configuration: DokkaConfiguration,
     commentsToContentConverter: CommentsToContentConverter,
     signatureProvider: SignatureProvider,
     val logger: DokkaLogger
 ) {
     protected open val contentBuilder = PageContentBuilder(commentsToContentConverter, signatureProvider, logger)
+
+    protected val separateInheritedMethods = configuration.separateInheritedMethods
 
     open fun pageForModule(m: DModule) =
         ModulePageNode(m.name.ifEmpty { "<root>" }, contentForModule(m), m, m.packages.map(::pageForPackage))
@@ -85,12 +89,20 @@ open class DefaultPageCreator(
 
     open fun pageForProperty(p: DProperty): MemberPageNode? = MemberPageNode(p.name, contentForProperty(p), setOf(p.dri), p)
 
+    private fun DFunction.isInherited(): Boolean = sourceSets.all { sourceSet -> extra[InheritedFunction]?.isInherited(sourceSet) == true }
+
     private val WithScope.filteredFunctions: List<DFunction>
-        get() = functions.mapNotNull { function ->
-            function.takeIf {
-                it.sourceSets.any { sourceSet -> it.extra[InheritedFunction]?.isInherited(sourceSet) != true }
-            }
+        get() = functions.filter { it.isInherited() }
+
+    private fun WithScope.splitFunctions(): Pair<Set<DFunction>, Set<DFunction>> {
+        val inherited = mutableSetOf<DFunction>()
+        val member = mutableSetOf<DFunction>()
+        functions.forEach {
+            if (it.isInherited()) inherited.add(it)
+            else member.add(it)
         }
+        return Pair(inherited, member)
+    }
 
     protected open fun contentForModule(m: DModule) = contentBuilder.contentFor(m) {
         group(kind = ContentKind.Cover) {
@@ -152,12 +164,28 @@ open class DefaultPageCreator(
             (s as? DPackage)?.typealiases ?: emptyList()
         ).flatten()
         divergentBlock("Types", types, ContentKind.Classlikes, extra = mainExtra + SimpleAttr.header("Types"))
-        divergentBlock(
-            "Functions",
-            s.functions.sorted(),
-            ContentKind.Functions,
-            extra = mainExtra + SimpleAttr.header("Functions")
-        )
+        if (separateInheritedMethods) {
+            val (inherited, member) = s.splitFunctions()
+            divergentBlock(
+                "Inherited functions",
+                inherited.sorted(),
+                ContentKind.Functions,
+                extra = mainExtra + SimpleAttr.header("Inherited functions")
+            )
+            divergentBlock(
+                "Member functions",
+                member.sorted(),
+                ContentKind.Functions,
+                extra = mainExtra + SimpleAttr.header("Member functions")
+            )
+        } else {
+            divergentBlock(
+                "Functions",
+                s.functions.sorted(),
+                ContentKind.Functions,
+                extra = mainExtra + SimpleAttr.header("Functions")
+            )
+        }
         block(
             "Properties",
             2,

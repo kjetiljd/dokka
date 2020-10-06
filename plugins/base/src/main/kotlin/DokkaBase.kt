@@ -113,6 +113,7 @@ class DokkaBase : DokkaPlugin() {
     val documentableToPageTranslator by extending {
         CoreExtensions.documentableToPageTranslator providing { ctx ->
             DefaultDocumentableToPageTranslator(
+                ctx.configuration,
                 ctx.single(commentsToContentConverter),
                 ctx.single(signatureProvider),
                 ctx.logger
