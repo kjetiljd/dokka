@@ -113,6 +113,7 @@ class ContentForParamsTest : AbstractCoreTest() {
             |package test
             | /**
             |  * @author Kordyjan
+            |  * @author Woolfy
             |  * @since 0.11
             |  */
             |fun function(abc: String) {
@@ -130,8 +131,15 @@ class ContentForParamsTest : AbstractCoreTest() {
                     divergentGroup {
                         divergentInstance {
                             before {
-                                unnamedTag("Author") { group {  +"Kordyjan" } }
-                                unnamedTag("Since") { group {  +"0.11" } }
+                                unnamedTag("Author") {
+                                    comment {
+                                        +"Kordyjan"
+                                    }
+                                    comment {
+                                        +"Woolfy"
+                                    }
+                                }
+                                unnamedTag("Since") { comment {  +"0.11" } }
                             }
                             divergent {
                                 bareSignature(
@@ -178,8 +186,8 @@ class ContentForParamsTest : AbstractCoreTest() {
                         divergentInstance {
                             before {
                                 group { pWrapped("comment to function") }
-                                unnamedTag("Author") { group { +"Kordyjan" } }
-                                unnamedTag("Since") { group { +"0.11" } }
+                                unnamedTag("Author") { comment { +"Kordyjan" } }
+                                unnamedTag("Since") { comment { +"0.11" } }
                             }
                             divergent {
                                 bareSignature(
@@ -529,8 +537,8 @@ class ContentForParamsTest : AbstractCoreTest() {
                         divergentInstance {
                             before {
                                 group { pWrapped("comment to function") }
-                                unnamedTag("Author") { group {  +"Kordyjan" } }
-                                unnamedTag("Since") { group {  +"0.11" } }
+                                unnamedTag("Author") { comment {  +"Kordyjan" } }
+                                unnamedTag("Since") { comment {  +"0.11" } }
                                 header(2) { +"Parameters" }
 
                                 group {
