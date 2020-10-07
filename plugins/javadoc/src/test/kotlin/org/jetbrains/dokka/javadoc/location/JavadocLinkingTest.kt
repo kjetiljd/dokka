@@ -1,6 +1,9 @@
 package org.jetbrains.dokka.javadoc.location
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.ExternalDocumentationLink
+import org.jetbrains.dokka.jdk
+import org.jetbrains.dokka.kotlinStdlib
 import org.jetbrains.dokka.model.doc.DocumentationLink
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
@@ -12,15 +15,13 @@ class JavadocLinkingTest : AbstractCoreTest() {
 
     @Test
     fun `linebroken link`() {
-        fun externalLink(link: String) = ExternalDocumentationLink(link)
-
         val config = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("jvmSrc/")
                     externalDocumentationLinks = listOf(
-                        externalLink("https://docs.oracle.com/javase/8/docs/api/"),
-                        externalLink("https://kotlinlang.org/api/latest/jvm/stdlib/")
+                        DokkaConfiguration.ExternalDocumentationLink.jdk(8),
+                        DokkaConfiguration.ExternalDocumentationLink.kotlinStdlib(),
                     )
                     analysisPlatform = "jvm"
                 }

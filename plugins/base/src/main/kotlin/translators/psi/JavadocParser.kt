@@ -140,8 +140,7 @@ class JavadocParser(
     }
 
     private fun PsiDocComment.getDescription(): Description? {
-        val nonEmptyDescriptionElements = descriptionElements.asIterable()
-        return convertJavadocElements(nonEmptyDescriptionElements).takeIf { it.isNotEmpty() }?.let {
+        return convertJavadocElements(descriptionElements.asIterable()).takeIf { it.isNotEmpty() }?.let {
             Description(wrapTagIfNecessary(it))
         }
     }
