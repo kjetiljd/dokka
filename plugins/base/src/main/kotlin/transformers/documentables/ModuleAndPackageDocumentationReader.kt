@@ -80,7 +80,7 @@ private class ContextModuleAndPackageDocumentationReader(
     private fun List<TagWrapper>.mergeDocumentationNodes(): List<TagWrapper> =
         groupBy { it::class }.values.map {
             it.reduce { acc, tagWrapper ->
-                val newRoot = RootDocTag(acc.children + tagWrapper.children)
+                val newRoot = CustomDocTag(acc.children + tagWrapper.children, name = (tagWrapper as? NamedTagWrapper)?.name.orEmpty())
                 when(acc) {
                     is See -> acc.copy(newRoot)
                     is Param -> acc.copy(newRoot)
