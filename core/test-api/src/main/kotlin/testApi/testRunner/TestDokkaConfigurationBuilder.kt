@@ -47,7 +47,7 @@ class TestDokkaConfigurationBuilder {
         pluginsConfiguration = pluginsConfigurations,
         modules = emptyList(),
         failOnWarning = failOnWarning,
-        separateInheritedMethods = separateInheritedMethods,
+        separateInheritedMembers = separateInheritedMethods,
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {

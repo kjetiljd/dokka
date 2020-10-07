@@ -93,7 +93,7 @@ interface DokkaConfiguration : Serializable {
     val cacheRoot: File?
     val offlineMode: Boolean
     val failOnWarning: Boolean
-    val separateInheritedMethods: Boolean
+    val separateInheritedMembers: Boolean
     val sourceSets: List<DokkaSourceSet>
     val modules: List<DokkaModuleDescription>
     val pluginsClasspath: List<File>

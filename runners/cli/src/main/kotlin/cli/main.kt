@@ -64,7 +64,7 @@ class GlobalArguments(args: Array<String>) : DokkaConfiguration {
         "Throw an exception if the generation exited with warnings"
     ).default(DokkaDefaults.failOnWarning)
 
-    override val separateInheritedMethods: Boolean by parser.option(
+    override val separateInheritedMembers: Boolean by parser.option(
         ArgType.Boolean,
         "Separates inherited method from the new ones"
     ).default(DokkaDefaults.separateInheritedMethods)

@@ -21,6 +21,7 @@ class KotlinAsJavaPlugin : DokkaPlugin() {
         val dokkaBasePlugin = plugin<DokkaBase>()
         CoreExtensions.documentableToPageTranslator providing { ctx ->
             KotlinAsJavaDocumentableToPageTranslator(
+                ctx.configuration,
                 ctx.single(dokkaBasePlugin.commentsToContentConverter),
                 ctx.single(dokkaBasePlugin.signatureProvider),
                 ctx.logger
