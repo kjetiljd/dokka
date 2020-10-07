@@ -779,4 +779,4 @@ val ContentNode.anchorLabel: String?
     get() = extra[SymbolAnchorHint.SymbolAnchorHintKey]?.anchorName
 
 val ContentNode.anchor: String
-    get() = dci.dri.first().toString().urlEncoded()
+    get() = (dci.dri.first().toString() + "/" + extra[SymbolAnchorHint.SymbolAnchorHintKey]?.contentKind + "/" + sourceSets.joinToString { it.sourceSetIDs.all.joinToString() }).urlEncoded()
